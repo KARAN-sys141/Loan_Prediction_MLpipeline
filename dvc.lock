@@ -1,0 +1,178 @@
+schema: '2.0'
+stages:
+  data_ingestion:
+    cmd: python src/data/data_ingestion.py
+    deps:
+    - path: src/data/data_ingestion.py
+      hash: md5
+      md5: 0e04ea508ce1aac32c9a01061ac6971f
+      size: 3054
+    outs:
+    - path: data/raw
+      hash: md5
+      md5: 5a03879a45944d0103de7b2941417003.dir
+      size: 3655979
+      nfiles: 1
+  data_processing:
+    cmd: python src/data/data_processing.py
+    deps:
+    - path: data/raw
+      hash: md5
+      md5: 5a03879a45944d0103de7b2941417003.dir
+      size: 3655979
+      nfiles: 1
+    - path: src/data/data_processing.py
+      hash: md5
+      md5: 76bab0e6cada2f66d1630451c94d84bf
+      size: 3661
+    params:
+      params.yaml:
+        data_preprocessing:
+          input_file: data/raw/cleaned_df.csv
+          output_dir: data/processed
+          output_file: preprocessed_df.csv
+          clip_person_age:
+            lower: 18
+            upper: 85
+          log_transform_columns:
+          - person_income
+          - loan_amnt
+          - person_emp_exp
+          column_type_cast:
+            person_age: int
+            person_income: int
+            loan_amnt: int
+            cb_person_cred_hist_length: int
+    outs:
+    - path: data/processed
+      hash: md5
+      md5: e1ab777ff651d891ff1cabad43377eec.dir
+      size: 5169601
+      nfiles: 1
+  feature_engineering:
+    cmd: python src/features/feature_engineering.py
+    deps:
+    - path: data/processed
+      hash: md5
+      md5: e1ab777ff651d891ff1cabad43377eec.dir
+      size: 5169601
+      nfiles: 1
+    - path: src/features/feature_engineering.py
+      hash: md5
+      md5: 31f6d55d3fca037cbf5a5508317fd316
+      size: 2884
+    params:
+      params.yaml:
+        feature_engineering:
+          input_file: data/processed/preprocessed_df.csv
+          output_file: data/interim/df_features.csv
+          label_encode_columns:
+          - person_gender
+          - previous_loan_defaults_on_file
+          one_hot_encode_columns:
+          - person_education
+          - person_home_ownership
+          - loan_intent
+          drop_first_dummy: true
+          drop_high_vif_columns:
+          - loan_percent_income
+          - loan_amnt
+    outs:
+    - path: data/interim
+      hash: md5
+      md5: 99b8b74fa98019354734df2add5a5937.dir
+      size: 18074016
+      nfiles: 1
+  model_building_1:
+    cmd: python src/model/model_building_1.py
+    deps:
+    - path: data/interim
+      hash: md5
+      md5: 99b8b74fa98019354734df2add5a5937.dir
+      size: 18074016
+      nfiles: 1
+    - path: src/model/model_building_1.py
+      hash: md5
+      md5: 34f5d23fc5edb77e456e7f259262dab6
+      size: 3443
+    params:
+      params.yaml:
+        model_building_1:
+          test_size: 0.2
+          random_state: 42
+          smote_random_state: 42
+          output_dir: data/processed_model
+    outs:
+    - path: data/processed_model
+      hash: md5
+      md5: 2d370d9592d538c7300185d2eb3ff61b.dir
+      size: 25719286
+      nfiles: 4
+  model_building_2:
+    cmd: python src/model/model_building_2.py
+    deps:
+    - path: data/processed_model
+      hash: md5
+      md5: 2d370d9592d538c7300185d2eb3ff61b.dir
+      size: 25719286
+      nfiles: 4
+    - path: src/model/model_building_2.py
+      hash: md5
+      md5: 4498ed0010ea7aae789978291282ff1a
+      size: 3446
+    params:
+      params.yaml:
+        model_building_2:
+          input_dir: data/processed_model
+          output_model_file: model.pkl
+          random_forest:
+            n_estimators: 700
+            min_samples_split: 2
+            max_features: 8
+            max_depth:
+          xgboost:
+            n_estimators: 200
+            max_depth: 30
+            learning_rate: 0.1
+            colsample_bytree: 0.5
+            use_label_encoder: false
+            eval_metric: mlogloss
+          gradient_boosting:
+            n_estimators: 600
+            max_depth: 5
+            learning_rate: 0.1
+            max_features: 1.0
+            subsample: 0.9
+            min_samples_leaf: 6
+          best_model_key: GB
+    outs:
+    - path: model.pkl
+      hash: md5
+      md5: 6fac90e00c785b277b9561f491baafd3
+      size: 2573589
+  model_evaluation:
+    cmd: python src/visualization/model_evaluation.py
+    deps:
+    - path: model.pkl
+      hash: md5
+      md5: 6fac90e00c785b277b9561f491baafd3
+      size: 2573589
+    - path: src/visualization/model_evaluation.py
+      hash: md5
+      md5: edea36e94f35805c2a2835c54f1cd2f3
+      size: 5020
+    params:
+      params.yaml:
+        model_evaluation:
+          model_file: model.pkl
+          input_dir: data/processed_model
+          output_metrics_file: model_metrics.json
+          average_type: weighted
+          roc_auc:
+            enabled: true
+            multi_class: ovr
+    outs:
+    - path: model_metrics.json
+      hash: md5
+      md5: 021b97f15f28c7efea904387ff0c1a05
+      size: 369

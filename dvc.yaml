@@ -2,7 +2,7 @@ stages:
   data_ingestion:
     cmd: python src/data/data_ingestion.py
     deps:
-    - src/data_ingestion.py
+    - src/data/data_ingestion.py
     outs:
     - data/raw
 
@@ -10,7 +10,7 @@ stages:
     cmd: python src/data/data_processing.py
     deps:
     - data/raw
-    - src/data_processing.py
+    - src/data/data_processing.py
     params:
     - data_preprocessing
     outs:
@@ -19,7 +19,7 @@ stages:
     cmd: python src/features/feature_engineering.py
     deps:
     - data/processed
-    - src/feature_engineering.py
+    - src/features/feature_engineering.py
     params:
     - feature_engineering
     outs:
@@ -28,7 +28,7 @@ stages:
     cmd: python src/model/model_building_1.py
     deps:
     - data/interim
-    - src/model_building_1.py
+    - src/model/model_building_1.py
     params:
     - model_building_1
     outs:
@@ -37,7 +37,7 @@ stages:
     cmd: python src/model/model_building_2.py
     deps:
     - data/processed_model
-    - src/model_building_2.py
+    - src/model/model_building_2.py
     params:
     - model_building_2
     outs:
@@ -46,7 +46,7 @@ stages:
     cmd: python src/visualization/model_evaluation.py
     deps:
     - model.pkl
-    - src/model_evaluation.py
+    - src/visualization/model_evaluation.py
     params:
     - model_evaluation
     metrics:
