@@ -1,0 +1,100 @@
+data_ingestion:
+  input_path: "C:/Users/karan/Downloads/loan_data.csv"
+  output_dir: "data/raw"
+  output_file: "cleaned_df.csv"
+  drop_duplicates: true
+
+
+data_preprocessing:
+  input_file: "data/raw/cleaned_df.csv"
+  output_dir: "data/processed"
+  output_file: "preprocessed_df.csv"
+
+  clip_person_age:
+    lower: 18
+    upper: 85
+
+  log_transform_columns:
+    - person_income
+    - loan_amnt
+    - person_emp_exp
+
+
+  column_type_cast:
+    person_age: int
+    person_income: int
+    loan_amnt: int
+    cb_person_cred_hist_length: int
+
+
+feature_engineering:
+  input_file: "data/processed/preprocessed_df.csv"
+  output_file: "data/interim/df_features.csv"
+
+  label_encode_columns:
+    - person_gender
+    - previous_loan_defaults_on_file
+
+  one_hot_encode_columns:
+    - person_education
+    - person_home_ownership
+    - loan_intent
+
+  drop_first_dummy: true
+
+  drop_high_vif_columns:
+    - loan_percent_income
+    - loan_amnt
+
+
+
+model_building_1:
+ 
+  test_size: 0.2
+  random_state: 42
+  smote_random_state: 42
+  output_dir: "data/processed_model"
+
+
+
+
+model_building_2:
+  
+  input_dir: "data/processed_model"
+  output_model_file: "model.pkl"
+
+  random_forest:
+    n_estimators: 700
+    min_samples_split: 2
+    max_features: 8
+    max_depth: null
+
+  xgboost:
+    n_estimators: 200
+    max_depth: 30
+    learning_rate: 0.1
+    colsample_bytree: 0.5
+    use_label_encoder: false
+    eval_metric: "mlogloss"
+
+  gradient_boosting:
+    n_estimators: 600
+    max_depth: 5
+    learning_rate: 0.1
+    max_features: 1.0
+    subsample: 0.9
+    min_samples_leaf: 6
+
+  best_model_key: "GB"
+
+
+
+model_evaluation:
+  model_file: "model.pkl"
+  input_dir: "data/processed_model"
+  output_metrics_file: "model_metrics.json"
+  average_type: "weighted"   # f1, precision, recall average
+  roc_auc:
+    enabled: true
+    multi_class: "ovr"
+
