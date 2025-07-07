@@ -7,7 +7,7 @@ import yaml
 import logging
 
 
-logger = logging.getLogger('data_ingestion')
+logger = logging.getLogger('model_building_1')
 logger.setLevel('DEBUG')
 
 console_handler = logging.StreamHandler()

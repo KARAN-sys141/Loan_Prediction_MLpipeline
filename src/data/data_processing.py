@@ -8,7 +8,7 @@ import logging
 warnings.filterwarnings("ignore")
 
 
-logger = logging.getLogger('data_ingestion')
+logger = logging.getLogger('data_processing')
 logger.setLevel('DEBUG')
 
 console_handler = logging.StreamHandler()

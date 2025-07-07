@@ -12,7 +12,7 @@ from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from xgboost import XGBClassifier
 
 
-logger = logging.getLogger('data_ingestion')
+logger = logging.getLogger('model_building_2')
 logger.setLevel('DEBUG')
 
 console_handler = logging.StreamHandler()

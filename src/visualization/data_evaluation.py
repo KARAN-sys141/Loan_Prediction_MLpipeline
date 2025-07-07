@@ -6,7 +6,7 @@ import logging
 from sklearn.metrics import (
     accuracy_score, f1_score, precision_score, recall_score, roc_auc_score
 )
-logger = logging.getLogger('data_ingestion')
+logger = logging.getLogger('data_evaluation')
 logger.setLevel('DEBUG')
 
 console_handler = logging.StreamHandler()

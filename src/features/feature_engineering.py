@@ -10,7 +10,7 @@ import logging
 warnings.filterwarnings("ignore")
 
 
-logger = logging.getLogger('data_ingestion')
+logger = logging.getLogger('feature_engineering')
 logger.setLevel('DEBUG')
 
 console_handler = logging.StreamHandler()
