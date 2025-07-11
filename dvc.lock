@@ -127,12 +127,12 @@ stages:
           output_model_file: model.pkl
           random_forest:
             n_estimators: 300
-            min_samples_split: 2
+            min_samples_split: 3
             max_features: 8
             max_depth:
           xgboost:
-            n_estimators: 200
-            max_depth: 30
+            n_estimators: 500
+            max_depth: 10
             learning_rate: 0.1
             colsample_bytree: 0.5
             use_label_encoder: false
@@ -144,19 +144,19 @@ stages:
             max_features: 1.0
             subsample: 0.9
             min_samples_leaf: 6
-          best_model_key: GB
+          best_model_key: Xgboost
     outs:
     - path: model.pkl
       hash: md5
-      md5: 444bc0c193ac62ec100aa6d6cb5978f9
-      size: 1717839
+      md5: f8a004202ba3cfc87897538d8024af37
+      size: 5795637
   model_evaluation:
     cmd: python src/visualization/model_evaluation.py
     deps:
     - path: model.pkl
       hash: md5
-      md5: 444bc0c193ac62ec100aa6d6cb5978f9
-      size: 1717839
+      md5: f8a004202ba3cfc87897538d8024af37
+      size: 5795637
     - path: src/visualization/model_evaluation.py
       hash: md5
       md5: edea36e94f35805c2a2835c54f1cd2f3
@@ -174,5 +174,5 @@ stages:
     outs:
     - path: model_metrics.json
       hash: md5
-      md5: 0e093f5529940d6447f35da5f68e809d
+      md5: 20138235464ec59f2551254ad2d9e153
       size: 396

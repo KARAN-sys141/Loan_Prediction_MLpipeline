@@ -65,13 +65,13 @@ model_building_2:
 
   random_forest:
     n_estimators: 300
-    min_samples_split: 2
+    min_samples_split: 3
     max_features: 8
     max_depth: null
 
   xgboost:
-    n_estimators: 200
-    max_depth: 30
+    n_estimators: 500
+    max_depth: 10
     learning_rate: 0.1
     colsample_bytree: 0.5
     use_label_encoder: false
@@ -85,7 +85,7 @@ model_building_2:
     subsample: 0.9
     min_samples_leaf: 6
 
-  best_model_key: "GB"
+  best_model_key: "Xgboost"
 
 
 
